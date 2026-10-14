@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio de Paletas de Cores — Finanças</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+  <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50 px-4 lg:px-8 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg" id="header-logo-bg" style="background-color: #047857;">
+          <i data-lucide="wallet" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg tracking-tight">Studio de Cores Finanças</h1>
+          <p class="text-xs text-slate-400">Teste identidades visuais aplicadas a interfaces financeiras reais</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 bg-slate-800/80 p-1.5 rounded-xl border border-slate-700/60 flex-wrap justify-center">
+        <button onclick="setPreset('corporate')" id="preset-corporate" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white">Finanças Corporativas</button>
+        <button onclick="setPreset('digital')" id="preset-digital" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white">Banco Digital</button>
+        <button onclick="setPreset('investments')" id="preset-investments" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white">Investimentos</button>
+        <button onclick="setPreset('sunset')" id="preset-sunset" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-slate-300 hover:text-white">Fintech Minimal</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto w-full p-4 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1">
+    
+    <div class="lg:col-span-4 flex flex-col gap-6">
+      
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-semibold text-sm text-slate-200 flex items-center gap-2">
+            <i data-lucide="palette" class="w-4 h-4 text-emerald-400"></i> Paleta Ativa
+          </h2>
+          <span id="preset-name-badge" class="text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">Finanças Corporativas</span>
+        </div>
+
+        <div class="space-y-3" id="swatches-container"></div>
+        <p class="text-xs text-slate-500 mt-3 text-center">Clique em qualquer cor para copiar o código HEX</p>
+      </div>
+
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <h2 class="font-semibold text-sm text-slate-200 flex items-center gap-2 mb-4">
+          <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i> Personalizador em Tempo Real
+        </h2>
+        
+        <div class="space-y-4" id="customizer-inputs"></div>
+
+        <div class="mt-5 pt-4 border-t border-slate-800 flex gap-2">
+          <button onclick="resetCurrentPreset()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl transition-all">Restaurar Padrão</button>
+          <button onclick="randomizeColors()" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold rounded-xl transition-all shadow-lg shadow-emerald-900/20">Gerar Aleatória</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="lg:col-span-8 flex flex-col gap-6">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl flex-1 flex flex-col justify-between">
+        
+        <div class="flex items-center justify-between pb-6 border-b border-slate-800">
+          <div class="flex items-center gap-3">
+            <div id="dash-brand-icon" class="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-colors">
+              <i data-lucide="pie-chart" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-base" id="dash-title">Nubank Enterprise</h3>
+              <p class="text-xs text-slate-400">Visão Geral da Conta Comercial</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium" id="status-badge-live">
+              <span class="w-2 h-2 rounded-full animate-pulse" id="status-dot"></span> Conta Verificada
+            </span>
+            <button id="dash-primary-btn" class="px-4 py-2 text-xs font-semibold rounded-xl text-white transition-all shadow-md">
+              + Nova Transação
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+          <div class="bg-slate-800/40 border border-slate-800/80 rounded-xl p-4">
+            <p class="text-xs text-slate-400 font-medium">Saldo Disponível</p>
+            <h4 class="text-2xl font-bold mt-1 text-slate-100">R$ 148.920,50</h4>
+            <span class="text-xs text-emerald-400 font-medium flex items-center gap-1 mt-2">
+              <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> +12.4% este mês
+            </span>
+          </div>
+
+          <div class="bg-slate-800/40 border border-slate-800/80 rounded-xl p-4">
+            <p class="text-xs text-slate-400 font-medium">Entradas (Outubro)</p>
+            <h4 class="text-2xl font-bold mt-1" id="text-success-sample">R$ 34.500,00</h4>
+            <span class="text-xs text-slate-400 mt-2 block">18 transações recebidas</span>
+          </div>
+
+          <div class="bg-slate-800/40 border border-slate-800/80 rounded-xl p-4">
+            <p class="text-xs text-slate-400 font-medium">Saídas / Despesas</p>
+            <h4 class="text-2xl font-bold mt-1" id="text-danger-sample">R$ 12.180,00</h4>
+            <span class="text-xs text-slate-400 mt-2 block">12 pagamentos efetuados</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div class="md:col-span-2 bg-slate-800/30 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-semibold text-slate-300">Fluxo de Caixa Semanal</span>
+              <div class="flex gap-1.5">
+                <span class="w-3 h-3 rounded-full inline-block" id="chart-bar-1"></span>
+                <span class="w-3 h-3 rounded-full inline-block" id="chart-bar-2"></span>
+              </div>
+            </div>
+            
+            <div class="h-32 flex items-end justify-between gap-2 pt-4 px-2">
+              <div class="w-full bg-slate-800/80 rounded-t-lg h-[40%] relative group transition-all" id="bar-1"><div class="absolute bottom-1 left-0 right-0 text-[10px] text-center text-slate-400">Seg</div></div>
+              <div class="w-full bg-slate-800/80 rounded-t-lg h-[65%] relative group transition-all" id="bar-2"><div class="absolute bottom-1 left-0 right-0 text-[10px] text-center text-slate-400">Ter</div></div>
+              <div class="w-full bg-slate-800/80 rounded-t-lg h-[50%] relative group transition-all" id="bar-3"><div class="absolute bottom-1 left-0 right-0 text-[10px] text-center text-slate-400">Qua</div></div>
+              <div class="w-full bg-slate-800/80 rounded-t-lg h-[85%] relative group transition-all" id="bar-4"><div class="absolute bottom-1 left-0 right-0 text-[10px] text-center text-slate-400">Qui</div></div>
+              <div class="w-full bg-slate-800/80 rounded-t-lg h-[95%] relative group transition-all" id="bar-5"><div class="absolute bottom-1 left-0 right-0 text-[10px] text-center text-slate-400">Sex</div></div>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/30 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-between">
+            <span class="text-xs font-semibold text-slate-300">Ações Rápidas</span>
+            <div class="space-y-2 my-3">
+              <button class="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-medium text-left flex items-center justify-between text-slate-200 transition-colors">
+                <span>Fazer PIX ou TED</span>
+                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-slate-400"></i>
+              </button>
+              <button class="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-medium text-left flex items-center justify-between text-slate-200 transition-colors">
+                <span>Emitir Relatório PDF</span>
+                <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-400"></i>
+              </button>
+              <button class="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-medium text-left flex items-center justify-between text-slate-200 transition-colors">
+                <span>Investir Tesouro</span>
+                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-slate-400"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-semibold text-slate-300 mb-3">Últimas Transações</h4>
+          <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-800/20">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-800/60 text-slate-400 border-b border-slate-800">
+                <tr>
+                  <th class="p-3 font-medium">Descrição</th>
+                  <th class="p-3 font-medium">Categoria</th>
+                  <th class="p-3 font-medium">Status</th>
+                  <th class="p-3 font-medium text-right">Valor</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                <tr>
+                  <td class="p-3 flex items-center gap-2 font-medium">
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px]" id="table-icon-1"><i data-lucide="arrow-down-left" class="w-3 h-3"></i></div>
+                    Recebimento Cliente ABC
+                  </td>
+                  <td class="p-3 text-slate-400">Consultoria</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" id="badge-success-sample">Concluído</span></td>
+                  <td class="p-3 text-right font-semibold text-emerald-400">+ R$ 8.500,00</td>
+                </tr>
+                <tr>
+                  <td class="p-3 flex items-center gap-2 font-medium">
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px]" id="table-icon-2"><i data-lucide="arrow-up-right" class="w-3 h-3"></i></div>
+                    Servidores Cloud AWS
+                  </td>
+                  <td class="p-3 text-slate-400">Infraestrutura</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" id="badge-danger-sample">Débito</span></td>
+                  <td class="p-3 text-right font-semibold text-slate-300">- R$ 1.250,00</td>
+                </tr>
+                <tr>
+                  <td class="p-3 flex items-center gap-2 font-medium">
+                    <div class="w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px]" id="table-icon-3"><i data-lucide="clock" class="w-3 h-3"></i></div>
+                    Transferência TED Interna
+                  </td>
+                  <td class="p-3 text-slate-400">Reserva</td>
+                  <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" id="badge-warning-sample">Processando</span></td>
+                  <td class="p-3 text-right font-semibold text-slate-300">R$ 5.000,00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <div id="toast" class="fixed bottom-6 right-6 bg-slate-800 text-slate-100 px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+    <span class="text-xs font-medium" id="toast-message">Cor copiada para a área de transferência!</span>
+  </div>
+
+  <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-900 mt-auto">
+    Studio Interativo de Cores para Aplicações Financeiras • Desenvolvido com Tailwind & Lucide
+  </footer>
+
+  <script>
+    const presets = {
+      corporate: {
+        name: "Finanças Corporativas",
+        primary: "#047857",
+        secondary: "#3b82f6",
+        success: "#10b981",
+        warning: "#f59e0b",
+        danger: "#f43f5e",
+        neutral: "#334155"
+      },
+      digital: {
+        name: "Banco Digital (Fintech)",
+        primary: "#8b5cf6",
+        secondary: "#06b6d4",
+        success: "#22c55e",
+        warning: "#eab308",
+        danger: "#ef4444",
+        neutral: "#1e293b"
+      },
+      investments: {
+        name: "Wealth & Investimentos",
+        primary: "#0f766e",
+        secondary: "#d97706",
+        success: "#14b8a6",
+        warning: "#f59e0b",
+        danger: "#e11d48",
+        neutral: "#18181b"
+      },
+      sunset: {
+        name: "Fintech Minimal Dark",
+        primary: "#ec4899",
+        secondary: "#6366f1",
+        success: "#34d399",
+        warning: "#fbbf24",
+        danger: "#fb7185",
+        neutral: "#0f172a"
+      }
+    };
+
+    let currentPalette = { ...presets.corporate };
+    let activePresetKey = 'corporate';
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+      setPreset('corporate');
+    });
+
+    function setPreset(key) {
+      activePresetKey = key;
+      currentPalette = { ...presets[key] };
+      
+      Object.keys(presets).forEach(pKey => {
+        const btn = document.getElementById(`preset-${pKey}`);
+        if (pKey === key) {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white shadow-sm transition-all";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white transition-all";
+        }
+      });
+
+      document.getElementById('preset-name-badge').innerText = presets[key].name;
+      renderApp();
+    }
+
+    function renderApp() {
+      renderSwatches();
+      renderCustomizer();
+      updateDashboardTheme();
+      lucide.createIcons();
+    }
+
+    function renderSwatches() {
+      const container = document.getElementById('swatches-container');
+      container.innerHTML = '';
+
+      const labels = {
+        primary: 'Cor Primária',
+        secondary: 'Cor Secundária',
+        success: 'Sucesso / Ganhos',
+        warning: 'Aviso / Pendente',
+        danger: 'Erro / Despesas',
+        neutral: 'Neutra / Fundos'
+      };
+
+      for (const [key, hex] of Object.entries(currentPalette)) {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between p-3 rounded-xl bg-slate-800/40 border border-slate-800 hover:border-slate-700 cursor-pointer transition-all group";
+        div.onclick = () => copyToClipboard(hex);
+        
+        div.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg shadow-sm border border-white/10 transition-transform group-hover:scale-105" style="background-color: ${hex}"></div>
+            <div>
+              <p class="text-xs font-medium text-slate-200">${labels[key] || key}</p>
+              <p class="text-[11px] text-slate-400 font-mono uppercase">${hex}</p>
+            </div>
+          </div>
+          <div class="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-emerald-400 group-hover:bg-slate-700 transition-colors">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          </div>
+        `;
+        container.appendChild(div);
+      }
+    }
+
+    function renderCustomizer() {
+      const container = document.getElementById('customizer-inputs');
+      container.innerHTML = '';
+
+      const labels = {
+        primary: 'Primária',
+        secondary: 'Secundária',
+        success: 'Sucesso',
+        warning: 'Aviso',
+        danger: 'Erro / Gasto',
+        neutral: 'Neutra'
+      };
+
+      for (const [key, hex] of Object.entries(currentPalette)) {
+        const wrapper = document.createElement('div');
+        wrapper.className = "flex items-center justify-between gap-3";
+        
+        wrapper.innerHTML = `
+          <label class="text-xs font-medium text-slate-300 w-28">${labels[key] || key}</label>
+          <div class="flex items-center gap-2 flex-1 justify-end">
+            <input type="text" value="${hex}" id="hex-${key}" class="w-20 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs font-mono text-slate-200 text-center uppercase focus:outline-none focus:border-emerald-500" onchange="updateColorFromInput('${key}', this.value)" />
+            <input type="color" value="${hex}" class="w-8 h-8 rounded-lg bg-transparent cursor-pointer border-0" oninput="updateColorFromInput('${key}', this.value)" id="colorpicker-${key}" />
+          </div>
+        `;
+        container.appendChild(wrapper);
+      }
+    }
+
+    function updateColorFromInput(key, val) {
+      if (!val.startsWith('#') && val.length === 6) val = '#' + val;
+      if (/^#[0-9A-F]{6}$/i.test(val)) {
+        currentPalette[key] = val;
+        const picker = document.getElementById(`colorpicker-${key}`);
+        const textInput = document.getElementById(`hex-${key}`);
+        if(picker) picker.value = val;
+        if(textInput && textInput.value !== val) textInput.value = val;
+        
+        renderSwatches();
+        updateDashboardTheme();
+      }
+    }
+
+    function updateDashboardTheme() {
+      document.getElementById('header-logo-bg').style.backgroundColor = currentPalette.primary;
+      document.getElementById('dash-brand-icon').style.backgroundColor = currentPalette.primary;
+      document.getElementById('dash-primary-btn').style.backgroundColor = currentPalette.primary;
+      
+      const statusBadge = document.getElementById('status-badge-live');
+      statusBadge.style.backgroundColor = currentPalette.success + '15';
+      statusBadge.style.color = currentPalette.success;
+      statusBadge.style.borderColor = currentPalette.success + '30';
+      document.getElementById('status-dot').style.backgroundColor = currentPalette.success;
+
+      document.getElementById('text-success-sample').style.color = currentPalette.success;
+      document.getElementById('text-danger-sample').style.color = currentPalette.danger;
+
+      document.getElementById('chart-bar-1').style.backgroundColor = currentPalette.primary;
+      document.getElementById('chart-bar-2').style.backgroundColor = currentPalette.secondary;
+      
+      document.getElementById('bar-1').style.backgroundColor = currentPalette.primary + '30';
+      document.getElementById('bar-2').style.backgroundColor = currentPalette.primary + '60';
+      document.getElementById('bar-3').style.backgroundColor = currentPalette.secondary + '40';
+      document.getElementById('bar-4').style.backgroundColor = currentPalette.primary + '90';
+      document.getElementById('bar-5').style.backgroundColor = currentPalette.primary;
+
+      document.getElementById('table-icon-1').style.backgroundColor = currentPalette.success;
+      document.getElementById('table-icon-2').style.backgroundColor = currentPalette.danger;
+      document.getElementById('table-icon-3').style.backgroundColor = currentPalette.warning;
+
+      const bSuccess = document.getElementById('badge-success-sample');
+      bSuccess.style.backgroundColor = currentPalette.success + '20';
+      bSuccess.style.color = currentPalette.success;
+
+      const bDanger = document.getElementById('badge-danger-sample');
+      bDanger.style.backgroundColor = currentPalette.danger + '20';
+      bDanger.style.color = currentPalette.danger;
+
+      const bWarning = document.getElementById('badge-warning-sample');
+      bWarning.style.backgroundColor = currentPalette.warning + '20';
+      bWarning.style.color = currentPalette.warning;
+    }
+
+    function resetCurrentPreset() {
+      currentPalette = { ...presets[activePresetKey] };
+      renderApp();
+      showToast("Paleta restaurada para o padrão!");
+    }
+
+    function randomizeColors() {
+      const letters = '0123456789ABCDEF';
+      function randomHex() {
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      currentPalette.primary = randomHex();
+      currentPalette.secondary = randomHex();
+      currentPalette.success = '#10b981';
+      currentPalette.warning = '#f59e0b';
+      currentPalette.danger = '#f43f5e';
+      currentPalette.neutral = '#1e293b';
+
+      renderApp();
+      showToast("Nova paleta gerada aleatoriamente!");
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(`Cor ${text} copiada para a área de transferência!`);
+        }).catch(() => {
+          fallbackCopyText(text);
+        });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast(`Cor ${text} copiada!`);
+      } catch (err) {
+        showToast(`Erro ao copiar cor.`);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').innerText = message;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>iop
